@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
   pass:{backgroundColor:'#fff',borderWidth:1,borderColor:'#E9E2D8'},
   love:{backgroundColor:'#C16F51'},
   swipeHint:{fontSize:10,color:'#999989',textAlign:'center',marginTop:7,marginBottom:2},
-  bottomNav:{height:72,borderTopWidth:1,borderTopColor:'#E9E4D8',backgroundColor:'#F9F7F1',flexDirection:'row',justifyContent:'center',gap:wide?90:55,alignItems:'center'},
+  bottomNav:{height:72,borderTopWidth:1,borderTopColor:'#E9E4D8',backgroundColor:'#F9F7F1',flexDirection:'row',justifyContent:'center',gap:55,alignItems:'center'},
   navItem:{alignItems:'center',justifyContent:'center',gap:3,minWidth:65},
   navIcon:{width:35,height:31,borderRadius:13,alignItems:'center',justifyContent:'center'},
   navIconActive:{backgroundColor:'#526A55'},
