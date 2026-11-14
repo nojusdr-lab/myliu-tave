@@ -199,12 +199,14 @@ alter table public.application_events enable row level security;
 alter table public.reports enable row level security;
 
 grant select, insert, update on public.profiles to authenticated;
-grant select, insert, update on public.shelters to authenticated;
+grant select, insert on public.shelters to authenticated;
+grant update (name, legal_name, registration_code, email, phone, website, city, address, description) on public.shelters to authenticated;
 grant select on public.shelter_members to authenticated;
 grant select, insert, update, delete on public.animals to authenticated;
 grant select, insert, update, delete on public.animal_photos to authenticated;
 grant select, insert, delete on public.favourites to authenticated;
-grant select, insert, update on public.applications to authenticated;
+grant select, insert on public.applications to authenticated;
+grant update (status) on public.applications to authenticated;
 grant select on public.application_events to authenticated;
 grant select, insert on public.reports to authenticated;
 grant select on public.animals, public.animal_photos, public.shelters to anon;
@@ -239,7 +241,13 @@ create policy "animals_manager_delete" on public.animals for delete to authentic
 using (private.is_shelter_member(shelter_id, array['manager']) or private.is_admin());
 
 create policy "animal_photos_public_for_published_animals" on public.animal_photos for select to anon, authenticated
-using (exists (select 1 from public.animals a where a.id = animal_id and a.status = 'published'));
+using (
+  exists (
+    select 1 from public.animals a
+    join public.shelters s on s.id = a.shelter_id
+    where a.id = animal_id and a.status = 'published' and s.status = 'verified'
+  )
+);
 create policy "animal_photos_members_read" on public.animal_photos for select to authenticated
 using (exists (select 1 from public.animals a where a.id = animal_id and private.is_shelter_member(a.shelter_id)));
 create policy "animal_photos_members_insert" on public.animal_photos for insert to authenticated
@@ -262,7 +270,7 @@ with check (
   and status = 'submitted'
   and exists (
     select 1 from public.animals a join public.shelters s on s.id = a.shelter_id
-    where a.id = animal_id and a.shelter_id = shelter_id and a.status = 'published' and s.status = 'verified'
+    where a.id = applications.animal_id and a.shelter_id = applications.shelter_id and a.status = 'published' and s.status = 'verified'
   )
 );
 create policy "applications_shelter_update" on public.applications for update to authenticated
